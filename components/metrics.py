@@ -9,38 +9,39 @@ def render_kpi_row(
     pop_df: pd.DataFrame,
     green_df: pd.DataFrame,
 ):
-    """오버레이에 맞는 KPI 카드 4개 렌더링."""
-    c1, c2, c3, c4 = st.columns(4)
+    """오버레이에 맞는 KPI 카드 2x2 렌더링 (모바일 대응)."""
+    r1c1, r1c2 = st.columns(2)
+    r2c1, r2c2 = st.columns(2)
 
     if overlay == "녹지율":
         total = green_df["green_area"].sum()
         top   = green_df.loc[green_df["green_area"].idxmax()]
         bot   = green_df.loc[green_df["green_area"].idxmin()]
         avg   = green_df["green_area"].mean()
-        c1.metric("서울 전체 녹지면적",  f"{int(total):,} ㎡")
-        c2.metric("녹지 가장 많은 곳",   top["district"], f"{int(top['green_area']):,} ㎡")
-        c3.metric("녹지 가장 부족한 곳", bot["district"], f"{int(bot['green_area']):,} ㎡")
-        c4.metric("자치구 평균 녹지",    f"{int(avg):,} ㎡")
+        r1c1.metric("전체 녹지면적",  f"{int(total):,} ㎡")
+        r1c2.metric("가장 초록",      top["district"], f"{int(top['green_area']):,} ㎡")
+        r2c1.metric("녹지 부족",      bot["district"], f"{int(bot['green_area']):,} ㎡")
+        r2c2.metric("자치구 평균",    f"{int(avg):,} ㎡")
 
     elif overlay == "유동인구":
-        total   = pop_df["population"].sum()
-        busiest = pop_df.loc[pop_df["population"].idxmax()]
+        total    = pop_df["population"].sum()
+        busiest  = pop_df.loc[pop_df["population"].idxmax()]
         quietest = pop_df.loc[pop_df["population"].idxmin()]
-        jammed  = (pop_df["congestion"] == "붐빔").sum()
-        c1.metric("서울 전체 추정인구", f"{total:,} 명")
-        c2.metric("가장 붐비는 곳",     busiest["district"],  busiest.get("congestion", ""))
-        c3.metric("가장 한산한 곳",     quietest["district"], f"{int(quietest['population']):,} 명")
-        c4.metric("붐빔 자치구",        f"{jammed} 개")
+        jammed   = (pop_df["congestion"] == "붐빔").sum()
+        r1c1.metric("전체 추정인구", f"{total:,} 명")
+        r1c2.metric("가장 붐비는 곳", busiest["district"], busiest.get("congestion", ""))
+        r2c1.metric("가장 한산한 곳", quietest["district"], f"{int(quietest['population']):,} 명")
+        r2c2.metric("붐빔 자치구",    f"{jammed} 개")
 
     else:  # 소음
-        avg   = noise_df["noise_db"].mean()
-        loud  = noise_df.loc[noise_df["noise_db"].idxmax()]
-        quiet = noise_df.loc[noise_df["noise_db"].idxmin()]
+        avg    = noise_df["noise_db"].mean()
+        loud   = noise_df.loc[noise_df["noise_db"].idxmax()]
+        quiet  = noise_df.loc[noise_df["noise_db"].idxmin()]
         over65 = (noise_df["noise_db"] >= 65).sum()
-        c1.metric("서울 평균 소음도",  f"{avg:.1f} dB",    _noise_label(avg))
-        c2.metric("가장 시끄러운 곳",  loud["district"],   f"{loud['noise_db']:.1f} dB")
-        c3.metric("가장 조용한 곳",    quiet["district"],  f"{quiet['noise_db']:.1f} dB")
-        c4.metric("65dB 초과 자치구",  f"{over65} 개")
+        r1c1.metric("평균 소음도",    f"{avg:.1f} dB",          _noise_label(avg))
+        r1c2.metric("가장 시끄러운 곳", loud["district"],        f"{loud['noise_db']:.1f} dB")
+        r2c1.metric("가장 조용한 곳", quiet["district"],         f"{quiet['noise_db']:.1f} dB")
+        r2c2.metric("65dB 초과",      f"{over65} 개")
 
 
 def render_district_detail(
