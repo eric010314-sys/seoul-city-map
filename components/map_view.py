@@ -100,7 +100,7 @@ def build_map(
     view = pdk.ViewState(
         latitude=37.5550,
         longitude=126.9780,
-        zoom=11.0,
+        zoom=8.8,
         pitch=35,
         bearing=0,
     )
@@ -123,7 +123,7 @@ def build_map(
     return pdk.Deck(
         layers=[layer],
         initial_view_state=view,
-        map_style="mapbox://styles/mapbox/dark-v10",
+        map_style="https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
         tooltip=tooltip,
     )
 
