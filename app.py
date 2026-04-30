@@ -75,13 +75,13 @@ def main():
 
     overlay_label = st.segmented_control(
         label="",
-        options=["🌿 녹지율", "👥 유동인구", "🔊 소음"],
-        default="🌿 녹지율",
+        options=["🌿 녹지율(%)", "👥 유동인구", "🔊 소음"],
+        default="🌿 녹지율(%)",
         label_visibility="collapsed",
     )
 
     overlay_key = {
-        "🌿 녹지율": "녹지율",
+        "🌿 녹지율(%)": "녹지율",
         "👥 유동인구": "유동인구",
         "🔊 소음": "소음",
     }.get(overlay_label, "녹지율")

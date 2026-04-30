@@ -34,7 +34,7 @@ def build_map(
 
     # 오버레이별 데이터 컬럼 및 설정
     cfg = {
-        "녹지율":  {"df": green_df,  "col": "green_area",  "unit": "㎡",  "label": "녹지면적"},
+        "녹지율":  {"df": green_df,  "col": "green_ratio", "unit": "%",  "label": "녹지율"},
         "유동인구": {"df": pop_df,    "col": "population",  "unit": "명",  "label": "추정인구"},
         "소음":    {"df": noise_df,  "col": "noise_db",    "unit": "dB",  "label": "소음도"},
     }[overlay]
@@ -48,7 +48,7 @@ def build_map(
     val_max = df[col].max()
 
     # 전체 데이터 병합 (툴팁용)
-    merged = green_df[["district", "green_area"]].merge(
+    merged = green_df[["district", "green_ratio"]].merge(
         noise_df[["district", "noise_db"]],  on="district", how="outer"
     ).merge(
         pop_df[["district", "population", "congestion"]], on="district", how="outer"
@@ -68,7 +68,7 @@ def build_map(
 
         noise_val = float(row["noise_db"].iloc[0])   if not row.empty and pd.notna(row["noise_db"].iloc[0])   else None
         pop_val   = int(row["population"].iloc[0])    if not row.empty and pd.notna(row["population"].iloc[0]) else None
-        green_val = float(row["green_area"].iloc[0]) if not row.empty and pd.notna(row["green_area"].iloc[0]) else None
+        green_ratio = float(row["green_ratio"].iloc[0]) if not row.empty and pd.notna(row["green_ratio"].iloc[0]) else None
         cong      = row["congestion"].iloc[0]         if not row.empty and pd.notna(row.get("congestion", pd.Series([None])).iloc[0]) else "-"
 
         rows.append({
@@ -78,7 +78,7 @@ def build_map(
             "color":       [245,158,11,230] if selected_district == name else _interp(colors, t),
             "noise_str":   f"{noise_val:.1f} dB" if noise_val is not None else "-",
             "pop_str":     f"{pop_val:,} 명"      if pop_val   is not None else "-",
-            "green_str":   f"{int(green_val):,} ㎡" if green_val is not None else "-",
+            "green_str":   f"{green_ratio:.2f}%" if green_ratio is not None else "-",
             "cong":        cong,
         })
 
